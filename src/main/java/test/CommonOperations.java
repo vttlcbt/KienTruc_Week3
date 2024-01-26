@@ -13,6 +13,43 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 public class CommonOperations {
 
+	public static void checkPackage(File projectDir) {
+		new DirExplorer((level, path, file) -> path.endsWith(".java"), (level, path, file) -> {
+			System.out.println("================================================");
+			System.out.println(path);
+
+			try {
+				new VoidVisitorAdapter<Object>() {
+					@Override
+					public void visit(ClassOrInterfaceDeclaration n, Object arg) {
+						super.visit(n, arg);
+
+						// Cau1 - [Check] package phải theo mẫu: com.companyname.* (trong đó * là tên bất kỳ)
+						String packageName = n.getFullyQualifiedName().get();
+						String[] packageArr = packageName.split("\\.");
+
+						System.out.println("Package name is: " + packageName);
+						if (packageArr.length < 2) {
+							System.out.println("-------------------Invalid package name: " + packageName
+									+ " - Posistion [" + n.getBegin() + ",]" + n.getEnd());
+						} else {
+							if (!packageArr[0].equals("com")) {
+								System.out.println("-------------------Invalid package name: " + packageArr[0]
+										+ " - Posistion [" + n.getBegin() + ",]" + n.getEnd());
+							}else {
+								if (!packageArr[1].equals("companyname")) {
+									System.out.println("-------------------Invalid package name: " + packageArr[1]
+											+ " - Posistion [" + n.getBegin() + ",]" + n.getEnd());
+								}
+							}
+						}
+					}
+				}.visit(StaticJavaParser.parse(file), null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).explore(projectDir);
+	}
 	public static void checkClsnameBeginUppercase(File projectDir) {
 		new DirExplorer((level, path, file) -> path.endsWith(".java"), (level, path, file) -> {
 			System.out.println("================================================");
