@@ -1,5 +1,9 @@
 package entities;
 
+/*
+ * This is a test class
+ * @Author: Bich Tuyen - 20067001
+ * */
 public class Student {
 	private String id;
 	private String name;

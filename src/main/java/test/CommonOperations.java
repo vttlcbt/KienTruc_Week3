@@ -24,7 +24,7 @@ public class CommonOperations {
 					public void visit(ClassOrInterfaceDeclaration n, Object arg) {
 						super.visit(n, arg);
 
-						// Cau2 - [Check] ten lop bat dau la chu in hoa
+						// Cau2 - [Check] tên class bắt đầu bằng chữ hoa
 						String clsNameString = n.getNameAsString();
 						char c = clsNameString.charAt(0);
 						if (c > 'a' && c < 'z') {
@@ -52,18 +52,20 @@ public class CommonOperations {
 						String clsNameString = n.getNameAsString();
 						Optional<Comment> oCmt = n.getComment();
 
-						// Cau 3 - [Check] comment, create-date, author
+						// Cau 3 - [Check] có comment đầy đủ @Author và @Create-Date
 						if (oCmt.isEmpty()) {
-							System.out.println("--------Class " + clsNameString + "has no comment");
+							System.out.println("--------Class " + clsNameString + " has no comment");
 						} else {
 							Comment cmt = oCmt.get();
 							String content = cmt.getContent();
+							System.out.println("Comment is: \n"+content);
+							// nếu có author thì in ra author
 							if (!content.contains("@Author")) {
-								System.out.println("--------Class " + clsNameString + "has comment without @Author");
+								System.out.println("--------Class " + clsNameString + " has comment without @Author");
 							}
-							if (!content.contains("@Create-Date")) {
+							if (!content.contains("@CreateDate")) {
 								System.out
-										.println("--------Class " + clsNameString + "has comment without @Create-Date");
+										.println("--------Class " + clsNameString + " has comment without @CreateDate");
 							}
 						}
 					}
@@ -84,12 +86,18 @@ public class CommonOperations {
 			try {
 				new VoidVisitorAdapter<Object>() {
 
+					// Cau 4 - [Check] tên biến bắt đầu bằng chữ thường
 					@Override
 					public void visit(FieldDeclaration n, Object arg) {
 						super.visit(n, arg);
 						for (VariableDeclarator variable: n.getVariables()) {
 							System.out.println(variable);
-
+							String fieldName = variable.getNameAsString();
+							char c = fieldName.charAt(0);
+							if (c > 'A' && c < 'Z') {
+								System.out.println("-------------------Invalid field name: " + fieldName
+										+ " - Posistion [" + n.getBegin() + ",]" + n.getEnd());
+							}
 						}
 					}
 
